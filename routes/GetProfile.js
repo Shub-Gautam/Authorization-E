@@ -2,25 +2,26 @@ const router = require("express").Router();
 const connectDB = require("../Dao/DBConnector");
 const user = require("../Dao/UserSchema");
 
-router.get("/", (req, res) => {
-  const Email = req.body.Email;
-  const Pass = req.body.password;
+router.get("/", async (req, res) => {
+  let tokenHeaderKey = process.env.TOKEN_HEADER_KEY;
+  let jwtSecretKey = process.env.JWT_SECRET_KEY;
+  let Email = req.body.Email;
+  try {
+    const token = req.header(tokenHeaderKey);
 
-  connectDB();
-  // console.log(Email);
-
-  const CurrentUser = user.find({ Email: Email }).limit(1);
-
-  console.log(CurrentUser.VStatus);
-  console.log(CurrentUser.password);
-  if (CurrentUser.VStatus == true) {
-    if (CurrentUser.password == Pass) {
+    const verified = jwt.verify(token, jwtSecretKey);
+    if (verified) {
+      connectDB();
+      const CurrentUser = await user.find({ Email: Email }).limit(1);
+      res.status(200);
       res.json(CurrentUser);
     } else {
-      res.json({ dat: " Account is verified but Password Not matched " });
+      // Access Denied
+      return res.status(401).send(error);
     }
-  } else {
-    res.json({ dat: " You are not verified , Verify yourself first " });
+  } catch (error) {
+    // Access Denied
+    return res.status(401).send(error);
   }
 });
 

@@ -20,7 +20,7 @@ const sendMail = (email, uniqueString) => {
     from: sender,
     to: email,
     subject: "Email Conformation for eatoes",
-    html: `Click <a herf="http://localhost:8080/verify/${uniqueString}">here</a> to verify your email.`,
+    html: `Click <a href="http://localhost:8080/verify/${uniqueString}">here</a> to verify your email.`,
   };
 
   Transport.sendMail(mailOptions, (err, response) => {

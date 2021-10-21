@@ -2,7 +2,7 @@ const router = require("express").Router();
 const connectDB = require("../Dao/DBConnector");
 const user = require("../Dao/UserSchema");
 
-router.post("/:uniqueString", async (req, res) => {
+router.get("/:uniqueString", async (req, res) => {
   console.log("working");
   const uStr = req.params.uniqueString;
 
@@ -14,6 +14,7 @@ router.post("/:uniqueString", async (req, res) => {
   if (User) {
     User.VStatus = true;
     await User.save();
+    res.status(200);
     res.json("verified");
   } else {
     res.json("Something went Wrong User not found");

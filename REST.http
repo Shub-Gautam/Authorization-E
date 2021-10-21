@@ -1,0 +1,32 @@
+GET http://localhost:8080/
+
+
+###
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+{
+    "Email":"skgautam260@gmail.com",
+    "password":"yourpass123",
+}
+
+###
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{
+    "RegType":"self",
+    "FName":"Shubham",
+    "LName":"Gautam",
+    "Email":"skgautam260@gmail.com",
+    "PhoneNo":"9548425684",
+    "password":"yourpass123",
+    "VMethod":"Em",
+    "UPhoto":"dfuboa231@#ad12"
+}
+
+###
+POST http://localhost:8080/auth/refresh-token
+
+
+###
+DELETE  http://localhost:8080/auth/logout
