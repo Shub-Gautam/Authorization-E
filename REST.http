@@ -1,20 +1,4 @@
-GET http://localhost:8080/info/
-Authorization: Bearer 
-
-{
-    "email":"skgautam393@gmail.com" 
-}
-
-
-###
-POST http://localhost:8080/auth/login
-Content-Type: application/json
-{
-    "email":"skgautam393@gmail.com",
-    "password":"yourpass123",
-}
-
-###
+### Registering
 POST http://localhost:8080/auth/register
 Content-Type: application/json
 
@@ -29,9 +13,25 @@ Content-Type: application/json
     "uPhoto":"dfuboa231@#ad12"
 }
 
-###
-POST http://localhost:8080/auth/refresh-token
+### Verification
+POST http://localhost:8080/auth/verify/dce451d6-f6b2-4ab5-bdf4-1602ae3bddb2u6648
 
 
-###
-DELETE  http://localhost:8080/auth/logout
+### Login
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+{
+    "email":"skgautam393@gmail.com",
+    "password":"yourpass123",
+}
+
+### profile
+GET http://localhost:8080/info/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiI2MTcyZDA5NWRiMDhiZDUxODg3MDFjYjgiLCJpYXQiOjE2MzQ5MTQ3MjUsImV4cCI6MTYzNDkxODMyNX0.YYZB7D8OwtpDvuSG5ee16Nwtq7jAkrmkaLxhTcdkD_8
+
+{
+    "email":"skgautam393@gmail.com" 
+}
+
+### Update
+DELETE  http://localhost:8080/auth/update

@@ -17,13 +17,6 @@ app.use("/auth", authRoute);
 // Route for getting profileinfo, updating profile
 app.use("/info", profileInfo);
 
-app.use("/register", require("./routes/Register"));
-app.use("/verify", require("./routes/VerifyMail"));
-app.use("/login", require("./routes/Login"));
-app.use("/profile", require("./routes/GetProfile"));
-app.use("/update", require("./routes/ProfileUpdate"));
-// app.use("/logout", require("./routes/Logout"));
-
 // Handeling all the other requests
 app.use(async (req, res, next) => {
   // const err = new Error("Not Found");
