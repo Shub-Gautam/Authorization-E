@@ -3,16 +3,14 @@ const connectDB = require("../Dao/DBConnector");
 const user = require("../Dao/UserSchema");
 
 router.get("/:uniqueString", async (req, res) => {
-  console.log("working");
   const uStr = req.params.uniqueString;
 
   connectDB();
-  console.log(uStr);
 
   const User = await user.findOne({ uniqueString: `${uStr}` });
 
   if (User) {
-    User.VStatus = true;
+    User.vStatus = true;
     await User.save();
     res.status(200);
     res.json("verified");

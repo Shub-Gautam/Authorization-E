@@ -1,32 +1,33 @@
 const mongoose = require("mongoose");
-const bcrypt = require("brcypt");
+const bcrypt = require("bcrypt");
 
 const Schema = mongoose.Schema;
 
-const userschema = new Schema(
+const userSchema = new Schema(
   {
-    UserID: {
+    userId: {
       type: String,
       required: true,
     },
-    RegType: {
+    regType: {
       type: String,
       required: true,
     },
-    FName: {
+    fName: {
       type: String,
       required: true,
     },
-    LName: {
+    lName: {
       type: String,
       required: true,
     },
-    Email: {
+    email: {
       type: String,
       required: true,
       lowercase: true,
+      unique: true,
     },
-    PhoneNo: {
+    phoneNo: {
       type: Number,
       required: false,
     },
@@ -34,20 +35,16 @@ const userschema = new Schema(
       type: String,
       required: true,
     },
-    VMethod: {
+    vMethod: {
       type: String,
       required: false,
     },
-    VStatus: {
+    vStatus: {
       type: Boolean,
       required: true,
     },
-    UPhoto: {
+    uPhoto: {
       type: String,
-      required: true,
-    },
-    UCreated: {
-      type: Date,
       required: true,
     },
     uniqueString: {
@@ -58,7 +55,7 @@ const userschema = new Schema(
   { timestamps: true }
 );
 
-userschema.pre("save", async function (next) {
+userSchema.pre("save", async function (next) {
   try {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(this.password, salt);
@@ -69,7 +66,7 @@ userschema.pre("save", async function (next) {
   }
 });
 
-userschema.methods.isValidPassword = async function (password) {
+userSchema.methods.isValidPassword = async function (password) {
   try {
     return await bcrypt.compare(password, this.password); // return boolean
   } catch (err) {
@@ -85,4 +82,4 @@ userschema.methods.isValidPassword = async function (password) {
 //   }
 // });
 
-module.exports = mongoose.model("user", userschema);
+module.exports = mongoose.model("user", userSchema);

@@ -4,12 +4,18 @@ const Joi = require("@hapi/joi");
 
 // Complete this schema
 const authSchema = Joi.object({
-  Email: Joi.string().email().lowercase().required(),
+  regType: Joi.string(),
+  fName: Joi.string().required(),
+  lName: Joi.string().required(),
+  email: Joi.string().email().lowercase().required(),
+  phoneNo: Joi.string(),
   password: Joi.string().min(8).required(),
+  vMethod: Joi.string(),
+  uPhoto: Joi.string(),
 });
 
 const loginSchema = Joi.object({
-  Email: Joi.string().email().lowercase().required(),
+  email: Joi.string().email().lowercase().required(),
   password: Joi.string().min(8).required(),
 });
 

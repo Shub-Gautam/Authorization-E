@@ -20,14 +20,14 @@ const sendMail = (email, uniqueString) => {
     from: sender,
     to: email,
     subject: "Email Conformation for eatoes",
-    html: `Click <a href="http://localhost:8080/verify/${uniqueString}">here</a> to verify your email.`,
+    html: `Click <a href="${process.env.HOST}/auth/verify/${uniqueString}">here</a> to verify your email.`,
   };
 
   Transport.sendMail(mailOptions, (err, response) => {
     if (err) {
-      console.error("Not Delivered " + err);
+      console.error(" Unable to send verification mail " + err);
     } else {
-      console.log("Verification Message Sent");
+      console.log(" Verification mail Sent successfully ");
     }
   });
 };
