@@ -1,7 +1,6 @@
 const connectDB = require("../../Dao/DBConnector");
-const { isValidPassword } = require("../../Helper/bcrypt_helpers");
-const { authSchema } = require("../../Models/validation_schema");
-const user = require("../../Models/UserSchema");
+const { authSchema } = require("../../Models/validation.schema");
+const user = require("../../Models/user.model");
 const createError = require("http-errors");
 const { signAccessToken } = require("../../Helper/jwt_helpers");
 const sendMail = require("../../Services/SendMailV");
@@ -24,8 +23,8 @@ module.exports = {
       const newUser = new user(req.body);
 
       const savedUser = await newUser.save(); //change it to newUser.create()
-      sendMail(result.email, uniqueString);
 
+      sendMail(result.email, uniqueString);
       const accessToken = await signAccessToken(savedUser.id);
 
       res.status(200).send({

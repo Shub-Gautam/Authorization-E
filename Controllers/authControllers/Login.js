@@ -1,7 +1,7 @@
 const connectDB = require("../../Dao/DBConnector");
 const { isValidPassword } = require("../../Helper/bcrypt_helpers");
-const { loginSchema } = require("../../Models/validation_schema");
-const user = require("../../Models/UserSchema");
+const { loginSchema } = require("../../Models/validation.schema");
+const user = require("../../Models/user.model");
 const createError = require("http-errors");
 const { signAccessToken } = require("../../Helper/jwt_helpers");
 

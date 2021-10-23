@@ -1,5 +1,5 @@
 const connectDB = require("../../Dao/DBConnector");
-const user = require("../../Models/UserSchema");
+const user = require("../../Models/user.model");
 
 module.exports = {
   verifyC: async (req, res, next) => {
