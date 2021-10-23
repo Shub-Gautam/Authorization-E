@@ -1,24 +1,17 @@
 const router = require("express").Router();
-const JWT = require("jsonwebtoken");
+
+// Importing middleware
 const { verifyAccessToken } = require("../Helper/jwt_helpers");
-const connectDB = require("../Dao/DBConnector");
-const createError = require("http-errors");
-const user = require("../Dao/UserSchema");
 
-router.get("/", verifyAccessToken, async (req, res, next) => {
-  try {
-    let email = req.body.email;
+// Importing Controllers
+const { userProfile } = require("../Controllers/infoControllers/Profile");
+const {
+  updateProfile,
+} = require("../Controllers/infoControllers/UpdateProfile");
 
-    connectDB();
-    const currentUser = await user.findOne({ email: email });
+// Routes
+router.get("/", verifyAccessToken, userProfile);
 
-    res.status(200);
-    res.send(currentUser);
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.post("/update", async (req, res, next) => {});
+router.post("/update", verifyAccessToken, updateProfile);
 
 module.exports = router;

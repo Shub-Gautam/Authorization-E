@@ -41,7 +41,7 @@ const userSchema = new Schema(
     },
     vStatus: {
       type: Boolean,
-      required: true,
+      default: true,
     },
     uPhoto: {
       type: String,

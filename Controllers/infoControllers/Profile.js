@@ -1,5 +1,5 @@
-const connectDB = require("../Dao/DBConnector");
-const user = require("../Dao/UserSchema");
+const connectDB = require("../../Dao/DBConnector");
+const user = require("../../Models/user.model");
 
 module.exports = {
   userProfile: async (req, res, next) => {

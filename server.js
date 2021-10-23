@@ -1,10 +1,9 @@
-"use strict";
-
 const express = require("express");
 const createError = require("http-errors");
 
-const authRoute = require("./routes/auth");
-const profileInfo = require("./routes/profileInfo.js");
+// Importing Routers
+const authRoute = require("./Routes/auth");
+const profileInfo = require("./Routes/profileInfo.js");
 
 const app = express();
 const PORT = process.env.PORT || 8080;

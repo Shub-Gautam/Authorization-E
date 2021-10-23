@@ -9,7 +9,7 @@ module.exports = {
       };
       const secret = process.env.JWT_SECRET_KEY;
       const option = {
-        expiresIn: "1h",
+        expiresIn: "24h",
       };
       JWT.sign(payload, secret, option, (err, token) => {
         if (err) reject(err);
