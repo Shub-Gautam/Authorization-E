@@ -1,9 +1,9 @@
-const connectDB = require("../../Dao/DBConnector");
 const { isValidPassword } = require("../../Helper/bcrypt_helpers");
 const { loginSchema } = require("../../Models/validation.schema");
 const user = require("../../Models/user.model");
 const createError = require("http-errors");
 const { signAccessToken } = require("../../Helper/jwt_helpers");
+const resCodes = require("../../Constants/response.constants");
 
 module.exports = {
   loginC: async (req, res, next) => {
@@ -20,7 +20,7 @@ module.exports = {
 
       const accessToken = await signAccessToken(User.id, User.email);
 
-      res.send({ accessToken });
+      res.status(resCodes.SUCCESS).send({ accessToken });
     } catch (err) {
       if (err.isJoi === true)
         return next(createError.BadRequest("Invalid Username/Password"));

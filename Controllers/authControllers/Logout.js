@@ -1,4 +1,5 @@
 const JWT = require("jsonwebtoken");
+const resCodes = require("../../Constants/response.constants");
 
 module.exports = {
   logoutC: async (req, res, next) => {
@@ -8,7 +9,7 @@ module.exports = {
 
     JWT.sign(authHeader, "", { expiresIn: 1 }, (logout, err) => {
       if (logout) {
-        res.status(200).send({ msg: "You have been Logged Out" });
+        res.status(resCodes.SUCCESS).send({ msg: "You have been Logged Out" });
       } else {
         res.send({ msg: "Error" });
       }

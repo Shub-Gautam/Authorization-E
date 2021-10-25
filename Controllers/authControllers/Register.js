@@ -5,6 +5,7 @@ const createError = require("http-errors");
 const { signAccessToken } = require("../../Helper/jwt_helpers");
 const sendMail = require("../../Services/SendMailV");
 const { v4: uuid4 } = require("uuid");
+const resCodes = require("../../Constants/response.constants");
 const fast2sms = require("fast-two-sms");
 const otpgn = require("../../Helper/otp_generator");
 
@@ -71,13 +72,12 @@ module.exports = {
           savedUser.phoneNo
         );
 
-        res.status(200).send({
-          accessToken: accessToken,
-          msg: "User registered successfully",
-        });
-      }
+      res.status(resCodes.SUCCESS).send({
+        accessToken: accessToken,
+        msg: "User registered successfully",
+      });
     } catch (err) {
-      if (err.isJoi === true) err.status = 422;
+      if (err.isJoi === true) err.status = resCodes.NOT_ABLE_TO_PROCESS_DATA;
       next(err);
     }
   },

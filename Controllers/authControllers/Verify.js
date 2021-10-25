@@ -1,5 +1,5 @@
-const connectDB = require("../../Dao/DBConnector");
 const user = require("../../Models/user.model");
+const resCodes = require("../../Constants/response.constants");
 
 module.exports = {
   verifyC: async (req, res, next) => {
@@ -11,9 +11,13 @@ module.exports = {
       if (User) {
         await user.updateOne({ uniqueString: `${uStr}` }, { vStatus: true });
 
-        res.status(200).send({ msg: "User verified successfully" });
+        res
+          .status(resCodes.SUCCESS)
+          .send({ msg: "User verified successfully" });
       } else {
-        res.status(422).send({ msg: "Something went wrong, user not found" });
+        res
+          .status(resCodes.NOT_ABLE_TO_PROCESS_DATA)
+          .send({ msg: "Something went wrong, user not found" });
       }
     } catch (err) {
       next(err);
