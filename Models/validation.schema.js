@@ -18,7 +18,14 @@ const loginSchema = Joi.object({
   password: Joi.string().min(8).required(),
 });
 
+const updateSchema = Joi.object({
+  fName: Joi.string().optional(),
+  lName: Joi.string().optional(),
+  uPhoto: Joi.string().optional(),
+});
+
 module.exports = {
   authSchema,
   loginSchema,
+  updateSchema,
 };
