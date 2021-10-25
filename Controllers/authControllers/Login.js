@@ -9,7 +9,6 @@ module.exports = {
   loginC: async (req, res, next) => {
     try {
       const result = await loginSchema.validateAsync(req.body);
-      connectDB();
       const User = await user.findOne({ email: result.email });
 
       if (!User) throw createError.NotFound("User Not Registered");
@@ -19,7 +18,7 @@ module.exports = {
       if (!isMatch)
         throw createError.Unauthorized("Username/password not valid");
 
-      const accessToken = await signAccessToken(User.id);
+      const accessToken = await signAccessToken(User.id, User.email);
 
       res.send({ accessToken });
     } catch (err) {

@@ -1,5 +1,6 @@
 const express = require("express");
 const createError = require("http-errors");
+const connectDB = require("./Dao/DBConnector");
 
 // Importing Routers
 const authRoute = require("./Routes/auth");
@@ -10,6 +11,8 @@ const PORT = process.env.PORT || 8080;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+connectDB();
 
 // Route for Register,Verification,login,logout
 app.use("/auth", authRoute);

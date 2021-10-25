@@ -4,10 +4,9 @@ const user = require("../../Models/user.model");
 module.exports = {
   userProfile: async (req, res, next) => {
     try {
-      let email = req.body.email;
+      const payloadObj = req.payload;
 
-      connectDB();
-      const currentUser = await user.findOne({ email: email });
+      const currentUser = await user.findOne({ email: payloadObj.email });
 
       res.status(200);
       res.send(currentUser);

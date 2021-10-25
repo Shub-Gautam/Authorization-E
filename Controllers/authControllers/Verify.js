@@ -6,8 +6,6 @@ module.exports = {
     try {
       const uStr = req.params.uniqueString;
 
-      connectDB();
-
       const User = await user.findOne({ uniqueString: `${uStr}` });
 
       if (User) {
