@@ -5,6 +5,7 @@ const createError = require("http-errors");
 const { signAccessToken } = require("../../Helper/jwt_helpers");
 const sendMail = require("../../Services/SendMailV");
 const { v4: uuid4 } = require("uuid");
+const resCodes = require("../../Constants/response.constants");
 
 module.exports = {
   registerC: async (req, res, next) => {
@@ -16,22 +17,21 @@ module.exports = {
         throw createError.Conflict(`${result.email} is already registered`);
 
       req.body.userId = uuid4();
-      console.log("we are here");
       req.body.uniqueString = `${uuid4()}u6648`;
 
       const newUser = new user(req.body);
 
       const savedUser = await newUser.save(); //change it to newUser.create()
-      console.log("we are herer again");
+
       sendMail(result.email, req.body.uniqueString);
       const accessToken = await signAccessToken(savedUser.id, savedUser.email);
-      console.log("hety");
-      res.status(200).send({
+
+      res.status(resCodes.SUCCESS).send({
         accessToken: accessToken,
         msg: "User registered successfully",
       });
     } catch (err) {
-      if (err.isJoi === true) err.status = 422;
+      if (err.isJoi === true) err.status = resCodes.NOT_ABLE_TO_PROCESS_DATA;
       next(err);
     }
   },

@@ -1,8 +1,8 @@
-const connectDB = require("../../Dao/DBConnector");
 const user = require("../../Models/user.model");
 const { v4: uuid4 } = require("uuid");
 const sendMail = require("../../Services/SendMailV");
 const { updateSchema } = require("../../Models/validation.schema");
+const resCodes = require("../../Constants/response.constants");
 
 module.exports = {
   updateProfile: async (req, res, next) => {
@@ -21,7 +21,7 @@ module.exports = {
           { email: uEmail, vStatus: false, uniqueString: `${uStr}` }
         );
         sendMail(uEmail, uStr);
-        res.status(200).send("Reverify your email");
+        res.status(resCodes.SUCCESS).send("Reverify your email");
       } else if (Updatetype === "2") {
         // Phone Updataion Reverification
       } else if (Updatetype === "3") {
@@ -29,9 +29,9 @@ module.exports = {
 
         await user.updateOne({ email }, req.body);
 
-        return res.status(200).send("Successfully Updated");
+        return res.status(resCodes.SUCCESS).send("Successfully Updated");
       } else {
-        res.status(300).send("Please specify update type");
+        res.status(resCodes.INCOMPLETE_INFO).send("Please specify update type");
       }
     } catch (err) {
       next(err);
