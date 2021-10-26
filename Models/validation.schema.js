@@ -6,18 +6,18 @@ const authSchema = Joi.object({
   regType: Joi.string().valid("self", "gmail"),
   fName: Joi.string().required(),
   lName: Joi.string().required(),
-  email: Joi.string().email().lowercase().required(),
+  email: Joi.string().email().lowercase(),
   phoneNo: Joi.string(),
   password: Joi.string().min(8).required(),
-  vMethod: Joi.string().valid("email", "phone"),
   uPhoto: Joi.string(),
 })
   .without("email", "phoneNo")
   .without("phoneNo", "email");
 
 const loginSchema = Joi.object({
-  email: Joi.string().email().lowercase().required(),
-  password: Joi.string().min(8).required(),
+  phoneNo: Joi.string().optional(),
+  email: Joi.string().email().lowercase().optional(),
+  password: Joi.string().min(8),
 });
 
 const updateSchema = Joi.object({

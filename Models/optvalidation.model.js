@@ -14,7 +14,10 @@ const otpSchema = new Schema({
   phoneNo: {
     type: Number,
     require: true,
+    unique: true,
   },
 });
+
+otpSchema.index({ otp: 1 }, { expireAfterSeconds: 3600 });
 
 module.exports = mongoose.model("otp", otpSchema);

@@ -8,13 +8,13 @@ module.exports = {
   updateProfile: async (req, res, next) => {
     try {
       const Updatetype = req.headers["updatetype"]; // 1 - Email , 2 - Phone , 3 - profile
-      const email = req.payload.email;
+      const username = req.payload.userName;
 
-      const result = await updateSchema.validateAsync(req.body);
+      const result = req.body;
 
       if (Updatetype === "1") {
         // Email Updatation and Reverification
-        const uEmail = result.email;
+        const uEmail = username;
         const uStr = uuid4();
         await user.updateOne(
           { email },
@@ -27,7 +27,9 @@ module.exports = {
       } else if (Updatetype === "3") {
         // Profile Updatation
 
-        await user.updateOne({ email }, req.body);
+        if (username == new Number("2"))
+          await user.updateOne({ phoneNo: username }, req.body);
+        else await user.updateOne({ email: userName }, req.body);
 
         return res.status(resCodes.SUCCESS).send("Successfully Updated");
       } else {

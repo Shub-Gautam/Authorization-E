@@ -2,11 +2,11 @@ const createError = require("http-errors");
 const JWT = require("jsonwebtoken");
 
 module.exports = {
-  signAccessToken: (userId, email) => {
+  signAccessToken: (userId, userName) => {
     return new Promise((resolve, reject) => {
       const payload = {
         aud: userId,
-        email: email,
+        userName: userName,
       };
       const secret = process.env.JWT_SECRET_KEY;
       const option = {

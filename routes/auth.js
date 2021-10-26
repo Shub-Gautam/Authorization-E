@@ -1,7 +1,7 @@
 const router = require("express").Router();
 
 // Importing Middleware
-const { verifyAccessToken } = require("../Helper/jwt_helpers");
+const { verifyAccessToken } = require("../Utils/jwt_helpers");
 
 // Importing Controllers
 const { registerC } = require("../Controllers/authControllers/Register");

@@ -2,12 +2,13 @@ const connectDB = require("../../Dao/DBConnector");
 const { authSchema } = require("../../Models/validation.schema");
 const user = require("../../Models/user.model");
 const createError = require("http-errors");
-const { signAccessToken } = require("../../Helper/jwt_helpers");
+const { signAccessToken } = require("../../Utils/jwt_helpers");
 const sendMail = require("../../Services/SendMailV");
 const { v4: uuid4 } = require("uuid");
 const resCodes = require("../../Constants/response.constants");
 const fast2sms = require("fast-two-sms");
-const otpgn = require("../../Helper/otp_generator");
+const otpgn = require("../../Utils/otp_generator");
+const otpVal = require("../../Models/optvalidation.model");
 
 module.exports = {
   registerC: async (req, res, next) => {
@@ -15,15 +16,17 @@ module.exports = {
       const result = await authSchema.validateAsync(req.body);
 
       // Check if User is registering through email or with phoneNo
-      const check = 0;
+      let check = 0;
       result.email ? (check = 1) : (check = 2);
+
+      const doesExist = await user.findOne({
+        $or: [({ email: result.email }, { phonNo: result.phonNo })],
+      });
+
+      if (doesExist) throw createError.Conflict(`User is already registered`);
 
       if (check === 1) {
         // Follow email path
-        const doesExist = await user.findOne({ email: result.email });
-
-        if (doesExist)
-          throw createError.Conflict(`${result.email} is already registered`);
 
         req.body.userId = uuid4();
         req.body.uniqueString = `${uuid4()}u6648`;
@@ -38,26 +41,29 @@ module.exports = {
           savedUser.email
         );
 
-        res.status(200).send({
+        res.status(resCodes.SUCCESS).send({
           accessToken: accessToken,
           msg: "User registered successfully",
         });
       } else if (check === 2) {
         // Follow phone path
-
-        const doesExist = await user.findOne({ email: result.email });
-
-        if (doesExist)
-          throw createError.Conflict(`${result.phoneNo} is already registered`);
+        // console.log("we are here !!!");
 
         const OTP = otpgn.otpGenerator();
 
         req.body.userId = uuid4();
-        req.body.otp = OTP;
 
         const newUser = new user(req.body);
 
         const savedUser = await newUser.save();
+
+        const savedOtp = new otpVal({
+          userId: savedUser.id,
+          phoneNo: result.phoneNo,
+          otp: OTP,
+        });
+
+        const otpValObj = await savedOtp.save();
 
         const options = {
           authorization: process.env.API_KEY,
@@ -72,10 +78,11 @@ module.exports = {
           savedUser.phoneNo
         );
 
-      res.status(resCodes.SUCCESS).send({
-        accessToken: accessToken,
-        msg: "User registered successfully",
-      });
+        res.status(resCodes.SUCCESS).send({
+          accessToken: accessToken,
+          msg: "User registered successfully",
+        });
+      }
     } catch (err) {
       if (err.isJoi === true) err.status = resCodes.NOT_ABLE_TO_PROCESS_DATA;
       next(err);

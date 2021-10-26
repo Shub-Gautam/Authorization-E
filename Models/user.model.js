@@ -23,7 +23,7 @@ const userSchema = new Schema(
     },
     email: {
       type: String,
-      required: true,
+      required: false,
       lowercase: true,
       unique: true,
     },
@@ -41,7 +41,7 @@ const userSchema = new Schema(
     },
     vStatus: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     uPhoto: {
       type: String,

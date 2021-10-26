@@ -4,9 +4,15 @@ const resCodes = require("../../Constants/response.constants");
 module.exports = {
   userProfile: async (req, res, next) => {
     try {
-      const payloadObj = req.payload;
+      let currentUser;
 
-      const currentUser = await user.findOne({ email: payloadObj.email });
+      if (isNaN(req.payload.userName)) {
+        currentUser = await user.findOne({ email: req.payload.userName });
+      } else {
+        currentUser = await user.findOne({
+          phoneNo: req.payload.userName,
+        });
+      }
 
       res.status(resCodes.SUCCESS);
       res.send(currentUser);
