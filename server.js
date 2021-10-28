@@ -21,8 +21,6 @@ app.use("/info", profileInfo);
 
 // Handeling all the other requests
 app.use(async (req, res, next) => {
-  // const err = new Error("Not Found");
-  // err.status(404);
   next(createError.NotFound("This route doesn't exist"));
 });
 

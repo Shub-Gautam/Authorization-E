@@ -9,6 +9,8 @@ const resCodes = require("../../Constants/response.constants");
 const fast2sms = require("fast-two-sms");
 const otpgn = require("../../Utils/otp_generator");
 const otpVal = require("../../Models/optvalidation.model");
+const { generateHashedPassword } = require("../../Utils/bcrypt_helpers");
+const resMsg = require("../../Constants/response.messages");
 
 module.exports = {
   registerC: async (req, res, next) => {
@@ -19,11 +21,22 @@ module.exports = {
       let check = 0;
       result.email ? (check = 1) : (check = 2);
 
-      const doesExist = await user.findOne({
-        $or: [({ email: result.email }, { phonNo: result.phonNo })],
-      });
+      let doesExist;
 
-      if (doesExist) throw createError.Conflict(`User is already registered`);
+      await user
+        .find()
+        .or([{ phoneNo: result.phoneNo }, { email: result.email }])
+        .then((data) => {
+          doesExist = data;
+        });
+
+      console.log(doesExist);
+      if (doesExist.length === 1)
+        throw createError.Conflict(`User is already registered`);
+
+      // Hashing the password
+      const hashedPass = generateHashedPassword(result.password);
+      result.password = hashedPass;
 
       if (check === 1) {
         // Follow email path
@@ -32,7 +45,6 @@ module.exports = {
         req.body.uniqueString = `${uuid4()}u6648`;
 
         const newUser = new user(req.body);
-
         const savedUser = await newUser.save();
 
         sendMail(result.email, req.body.uniqueString);
@@ -47,14 +59,11 @@ module.exports = {
         });
       } else if (check === 2) {
         // Follow phone path
-        // console.log("we are here !!!");
 
         const OTP = otpgn.otpGenerator();
-
         req.body.userId = uuid4();
 
         const newUser = new user(req.body);
-
         const savedUser = await newUser.save();
 
         const savedOtp = new otpVal({
@@ -63,7 +72,7 @@ module.exports = {
           otp: OTP,
         });
 
-        const otpValObj = await savedOtp.save();
+        await savedOtp.save();
 
         const options = {
           authorization: process.env.API_KEY,
@@ -71,7 +80,7 @@ module.exports = {
           numbers: [`${result.phoneNo}`],
         };
 
-        fast2sms.sendMessage(options);
+        // fast2sms.sendMessage(options);
 
         const accessToken = await signAccessToken(
           savedUser.id,
