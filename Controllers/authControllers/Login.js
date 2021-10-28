@@ -15,23 +15,22 @@ module.exports = {
       let check = 0;
       result.email ? (check = 1) : (check = 2);
 
-      const User = await user.findOne({
-        $or: [{ email: result.email }, { phoneNo: result.phoneNo }],
-      });
-
-      if (!User) throw createError.NotFound(resMsg.USER_NOT_REGISTERED);
-
       const isMatch = isValidPassword(result.password, User.password);
 
       if (!isMatch) throw createError.Unauthorized(resMsg.INVALID_CREDENTIALS);
 
       if (check === 1) {
         // Login through email
+        const User = await user.findOne({ email: result.email });
+        if (!User) throw createError.NotFound(resMsg.USER_NOT_REGISTERED);
 
         const accessToken = await signAccessToken(User.userId, User.email);
         res.status(resCodes.SUCCESS).send({ accessToken });
       } else if (check === 2) {
         // login through phone
+
+        const User = await user.findOne({ phoneNo: result.phoneNo });
+        if (!User) throw createError.NotFound(resMsg.USER_NOT_REGISTERED);
 
         const accessToken = await signAccessToken(User.userId, User.phoneNo);
         res.status(resCodes.SUCCESS).send({ accessToken });

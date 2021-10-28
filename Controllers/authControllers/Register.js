@@ -21,25 +21,15 @@ module.exports = {
       let check = 0;
       result.email ? (check = 1) : (check = 2);
 
-      let doesExist;
-
-      await user
-        .find()
-        .or([{ phoneNo: result.phoneNo }, { email: result.email }])
-        .then((data) => {
-          doesExist = data;
-        });
-
-      console.log(doesExist);
-      if (doesExist.length === 1)
-        throw createError.Conflict(`User is already registered`);
-
       // Hashing the password
       const hashedPass = generateHashedPassword(result.password);
       result.password = hashedPass;
 
       if (check === 1) {
         // Follow email path
+
+        let doesExist = await user.findOne({ email: result.email });
+        if (doesExist) throw createError.Conflict(`User is already registered`);
 
         req.body.userId = uuid4();
         req.body.uniqueString = `${uuid4()}u6648`;
@@ -59,6 +49,9 @@ module.exports = {
         });
       } else if (check === 2) {
         // Follow phone path
+
+        let doesExist = await user.findOne({ phoneNo: result.phoneNo });
+        if (doesExist) throw createError.Conflict(`User is already registered`);
 
         const OTP = otpgn.otpGenerator();
         req.body.userId = uuid4();
@@ -80,7 +73,7 @@ module.exports = {
           numbers: [`${result.phoneNo}`],
         };
 
-        // fast2sms.sendMessage(options);
+        fast2sms.sendMessage(options);
 
         const accessToken = await signAccessToken(
           savedUser.id,
