@@ -49,7 +49,7 @@ const updateSchema = Joi.object({
   uPhoto: Joi.string(),
 }).or("fName", "lName", "uPhoto");
 
-const updateCredJoi = Joi.object({
+const updatePassJoi = Joi.object({
   oldPassword: Joi.string()
     .min(8)
     .regex(/(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}/)
@@ -60,9 +60,19 @@ const updateCredJoi = Joi.object({
     .required(),
 });
 
+const updateCredJoi = Joi.object({
+  password: Joi.string()
+    .min(8)
+    .regex(/(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}/)
+    .required(),
+  email: Joi.string().email().lowercase().optional(),
+  phoneNo: Joi.string().max(10).regex(/[0-9]/).optional(),
+}).or("phoneNo", "email");
+
 module.exports = {
   authSchema,
   loginSchema,
   updateSchema,
+  updatePassJoi,
   updateCredJoi,
 };

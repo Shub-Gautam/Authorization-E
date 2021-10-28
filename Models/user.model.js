@@ -6,6 +6,7 @@ const userSchema = new Schema(
     userId: {
       type: String,
       required: false,
+      unique: true,
     },
     regType: {
       type: String,

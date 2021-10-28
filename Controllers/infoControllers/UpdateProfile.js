@@ -8,7 +8,7 @@ module.exports = {
   updateProfile: async (req, res, next) => {
     try {
       const result = updateSchema.validateAsync(req.body);
-      await user.updateOne({ userId }, req.body);
+      await user.updateOne({ userId: req.body.userId }, req.body);
 
       return res.status(resCodes.SUCCESS).send("Successfully Updated");
     } catch (err) {

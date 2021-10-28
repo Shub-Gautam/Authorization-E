@@ -1,4 +1,3 @@
-const connectDB = require("../../Dao/DBConnector");
 const { authSchema } = require("../../Models/validation.schema");
 const user = require("../../Models/user.model");
 const createError = require("http-errors");
@@ -22,8 +21,8 @@ module.exports = {
       result.email ? (check = 1) : (check = 2);
 
       // Hashing the password
-      const hashedPass = generateHashedPassword(result.password);
-      result.password = hashedPass;
+      const hashedPass = await generateHashedPassword(result.password);
+      req.body.password = hashedPass;
 
       if (check === 1) {
         // Follow email path
@@ -39,7 +38,7 @@ module.exports = {
 
         sendMail(result.email, req.body.uniqueString);
         const accessToken = await signAccessToken(
-          savedUser.id,
+          savedUser.userId,
           savedUser.email
         );
 
@@ -60,7 +59,7 @@ module.exports = {
         const savedUser = await newUser.save();
 
         const savedOtp = new otpVal({
-          userId: savedUser.id,
+          userId: savedUser.userId,
           phoneNo: result.phoneNo,
           otp: OTP,
         });
@@ -76,7 +75,7 @@ module.exports = {
         fast2sms.sendMessage(options);
 
         const accessToken = await signAccessToken(
-          savedUser.id,
+          savedUser.userId,
           savedUser.phoneNo
         );
 

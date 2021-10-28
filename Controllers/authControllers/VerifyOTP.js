@@ -7,17 +7,24 @@ module.exports = {
   verifyOtp: async (req, res, next) => {
     try {
       const userId = req.payload.userId;
-      const foundedOtp = await otp.findOne({ userId });
       const foundedUser = await user.findOne({ userId });
+      const foundedOtp = await otp.findOne({ userId });
+
+      console.log(foundedUser);
 
       if (foundedOtp) {
+        console.log(userId);
+        console.log(foundedOtp);
+        console.log(foundedUser);
         if (foundedUser) {
-          await user.updateOne({ userId }, { vStatus: true });
-          res.status(resCodes.SUCCESS).send(resMsg.VERIFIED_SUCCESSFULLY);
-        } else {
-          res
-            .status(resCodes.NOT_ABLE_TO_PROCESS_DATA)
-            .send(resMsg.INVALID_OTP);
+          if (foundedOtp.otp === req.body.otp) {
+            await user.updateOne({ userId }, { vStatus: true });
+            res.status(resCodes.SUCCESS).send(resMsg.VERIFIED_SUCCESSFULLY);
+          } else {
+            res
+              .status(resCodes.NOT_ABLE_TO_PROCESS_DATA)
+              .send(resMsg.INVALID_OTP);
+          }
         }
       } else {
         res.status(resCodes.NOT_ABLE_TO_PROCESS_DATA).send(resMsg.OTP_EXPIRED);
