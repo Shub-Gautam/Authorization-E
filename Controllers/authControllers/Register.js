@@ -14,20 +14,21 @@ const resMsg = require("../../Constants/response.messages");
 module.exports = {
   registerC: async (req, res, next) => {
     try {
-      const result = await authSchema.validateAsync(req.body);
-
       // Check if User is registering through email or with phoneNo
       let check = 0;
-      result.email ? (check = 1) : (check = 2);
+      req.result.email ? (check = 1) : (check = 2);
 
       // Hashing the password
-      const hashedPass = await generateHashedPassword(result.password);
+      const hashedPass = await generateHashedPassword(req.result.password);
       req.body.password = hashedPass;
 
       if (check === 1) {
         // Follow email path
 
-        let doesExist = await user.findOne({ email: result.email });
+        let doesExist = await user.findOne({
+          email: req.result.email,
+          vStatus: false,
+        });
         if (doesExist) throw createError.Conflict(`User is already registered`);
 
         req.body.userId = uuid4();
@@ -36,7 +37,7 @@ module.exports = {
         const newUser = new user(req.body);
         const savedUser = await newUser.save();
 
-        sendMail(result.email, req.body.uniqueString);
+        sendMail(req.result.email, req.body.uniqueString);
         const accessToken = await signAccessToken(
           savedUser.userId,
           savedUser.email
@@ -49,7 +50,10 @@ module.exports = {
       } else if (check === 2) {
         // Follow phone path
 
-        let doesExist = await user.findOne({ phoneNo: result.phoneNo });
+        let doesExist = await user.findOne({
+          phoneNo: req.result.phoneNo,
+          vStatus: false,
+        });
         if (doesExist) throw createError.Conflict(`User is already registered`);
 
         const OTP = otpgn.otpGenerator();
@@ -60,7 +64,7 @@ module.exports = {
 
         const savedOtp = new otpVal({
           userId: savedUser.userId,
-          phoneNo: result.phoneNo,
+          phoneNo: req.result.phoneNo,
           otp: OTP,
         });
 
@@ -69,7 +73,7 @@ module.exports = {
         const options = {
           authorization: process.env.API_KEY,
           message: `You OTP for verification is ${OTP}`,
-          numbers: [`${result.phoneNo}`],
+          numbers: [`${req.result.phoneNo}`],
         };
 
         fast2sms.sendMessage(options);

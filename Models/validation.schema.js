@@ -6,10 +6,10 @@ const Joi = require("@hapi/joi");
 const authSchema = Joi.object({
   regType: Joi.string().valid("self", "gmail"),
   fName: Joi.string()
-    .regex(/[a-zA-Z]/)
+    .regex(/(?=.*?[A-Z])(?=.*?[a-z])/)
     .required(),
   lName: Joi.string()
-    .regex(/[a-zA-Z]/)
+    .regex(/(?=.*?[A-Z])(?=.*?[a-z])/)
     .required(),
   email: Joi.string().email().lowercase(),
   phoneNo: Joi.string().max(10).regex(/[0-9]/),
@@ -44,8 +44,8 @@ const verifyEmailSchema = Joi.object({
 
 // Update Profile Schema
 const updateSchema = Joi.object({
-  fName: Joi.string().regex(/[a-zA-Z]/),
-  lName: Joi.string().regex(/[a-zA-Z]/),
+  fName: Joi.string().regex(/(?=.*?[A-Z])(?=.*?[a-z])/),
+  lName: Joi.string().regex(/(?=.*?[A-Z])(?=.*?[a-z])/),
   uPhoto: Joi.string(),
 }).or("fName", "lName", "uPhoto");
 

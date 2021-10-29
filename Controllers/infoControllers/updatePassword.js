@@ -5,24 +5,19 @@ const {
 } = require("../../Utils/bcrypt_helpers");
 const resCodes = require("../../Constants/response.constants");
 const resMsg = require("../../Constants/response.messages");
-const { updatePassJoi } = require("../../Models/validation.schema");
 module.exports = {
   updatePass: async (req, res, next) => {
     try {
-      const result = updatePassJoi.validateAsync(req.body);
-
       const userId = req.payload.userId;
 
-      const newPass = result.newPassword;
+      const newPass = req.result.newPassword;
 
-      console.log("here");
+      const hashedPassword = await generateHashedPassword(newPass);
 
-      const hashedPassword = generateHashedPassword(newPass);
-
-      const foundedUser = user.find({ userId });
-      const isValid = isValidPassword(
-        new Number(foundedUser.password),
-        result.oldPassword
+      const foundedUser = await user.findOne({ userId });
+      const isValid = await isValidPassword(
+        foundedUser.password,
+        req.result.oldPassword
       );
       if (!isValid) {
         return res

@@ -7,4 +7,5 @@ module.exports = {
   INVALID_OTP: "Invalid OTP",
   OTP_EXPIRED: "OTP Expired",
   UPDATE_SUCCESSFULL: "Updated successfully",
+  ALREADY_VERIFIED: "User is already verified",
 };

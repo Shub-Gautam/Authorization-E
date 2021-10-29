@@ -2,6 +2,12 @@ const router = require("express").Router();
 
 // Importing Middleware
 const { verifyAccessToken } = require("../Utils/jwt_helpers");
+const {
+  checkJoiRegister,
+} = require("../Middleware/JoiMiddleware/joi.register.check");
+const {
+  checkJoiLogin,
+} = require("../Middleware/JoiMiddleware/joi.login.check");
 
 // Importing Controllers
 const { registerC } = require("../Controllers/authControllers/Register");
@@ -12,13 +18,13 @@ const { verifyOtp } = require("../Controllers/authControllers/VerifyOTP");
 const { resendVerification } = require("../Controllers/authControllers/Resend");
 
 // Routes
-router.post("/register", registerC);
+router.post("/register", checkJoiRegister, registerC);
 
 router.get("/verify/:uniqueString", verifyC);
 
 router.post("/verify-otp", verifyAccessToken, verifyOtp);
 
-router.post("/login", loginC);
+router.post("/login", checkJoiLogin, loginC);
 
 router.post(
   "/login/resend-verification",

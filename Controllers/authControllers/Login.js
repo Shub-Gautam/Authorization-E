@@ -9,18 +9,19 @@ const resMsg = require("../../Constants/response.messages");
 module.exports = {
   loginC: async (req, res, next) => {
     try {
-      // Joi Validation
-      const result = await loginSchema.validateAsync(req.body);
-
       let check = 0;
-      result.email ? (check = 1) : (check = 2);
+      req.result.email ? (check = 1) : (check = 2);
 
       if (check === 1) {
         // Login through email
-        const User = await user.findOne({ email: result.email });
+        const User = await user.findOne({ email: req.result.email });
         if (!User) throw createError.NotFound(resMsg.USER_NOT_REGISTERED);
 
-        const isMatch = isValidPassword(result.password, User.password);
+        const isMatch = await isValidPassword(
+          req.result.password,
+          User.password
+        );
+
         if (!isMatch)
           throw createError.Unauthorized(resMsg.INVALID_CREDENTIALS);
 
@@ -29,10 +30,13 @@ module.exports = {
       } else if (check === 2) {
         // login through phone
 
-        const User = await user.findOne({ phoneNo: result.phoneNo });
+        const User = await user.findOne({ phoneNo: req.result.phoneNo });
         if (!User) throw createError.NotFound(resMsg.USER_NOT_REGISTERED);
 
-        const isMatch = isValidPassword(result.password, User.password);
+        const isMatch = await isValidPassword(
+          req.result.password,
+          User.password
+        );
         if (!isMatch)
           throw createError.Unauthorized(resMsg.INVALID_CREDENTIALS);
 

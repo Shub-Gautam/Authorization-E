@@ -2,12 +2,17 @@ const user = require("../../Models/user.model");
 const otp = require("../../Models/optvalidation.model");
 const resMsg = require("../../Constants/response.messages");
 const otpgn = require("../../Utils/otp_generator");
+const resCodes = require("../../Constants/response.constants");
 
 module.exports = {
   resendVerification: async (req, res, next) => {
     const userId = req.payload.userId;
 
     const foundedUser = user.find({ userId });
+
+    if (foundedUser.vStatus === true) {
+      return res.status(resCodes.SUCCESS).send(resMsg.ALREADY_VERIFIED);
+    }
 
     let check = 0;
     foundedUser.email ? (check = 1) : (check = 2);

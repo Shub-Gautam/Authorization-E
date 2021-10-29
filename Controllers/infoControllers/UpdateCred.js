@@ -6,17 +6,17 @@ const resMsg = require("../../Constants/response.messages");
 const otpgn = require("../../Utils/otp_generator");
 const otp = require("../../Models/optvalidation.model");
 const fast2sms = require("fast-two-sms");
+const { v4: uuid4 } = require("uuid");
+const sendMail = require("../../Services/SendMailV");
 
 module.exports = {
   updateCred: async (req, res, next) => {
     try {
-      const result = updateCredJoi.validateAsync(req.body);
       let check = 0;
-      result.email ? (check = 1) : (check = 2);
+      req.result.email ? (check = 1) : (check = 2);
 
       const foundedUser = await user.findOne({ userId: req.payload.userId });
 
-      console.log();
       const isValid = await isValidPassword(
         foundedUser.password,
         req.body.password
@@ -30,15 +30,32 @@ module.exports = {
 
       if (check === 1) {
         // email path
+
+        const eUser = await user.findOne({
+          email: req.result.email,
+          vStatus: false,
+        });
+        if (eUser) {
+          await user.deleteOne({ email: req.result.email, vStatus: false });
+        }
+
         const uStr = uuid4();
         await user.updateOne(
           { email: foundedUser.email },
-          { email: result.email, uniqueString: `${uStr}`, vStatus: false }
+          { email: req.result.email, uniqueString: `${uStr}`, vStatus: false }
         );
         sendMail(foundedUser.email, uStr);
         res.status(resCodes.SUCCESS).send(resMsg.REVERIFY);
       } else if (check === 2) {
         // phone path
+
+        const eUser = await user.findOne({
+          phoneNo: req.result.phoneNo,
+          vStatus: false,
+        });
+        if (eUser) {
+          await user.deleteOne({ phoneNo: req.result.phoneNo, vStatus: false });
+        }
 
         const OTP = otpgn.otpGenerator();
 
@@ -56,7 +73,7 @@ module.exports = {
         const options = {
           authorization: process.env.API_KEY,
           message: `You OTP for verification is ${OTP}`,
-          numbers: [`${result.phoneNo}`],
+          numbers: [`${req.result.phoneNo}`],
         };
 
         fast2sms.sendMessage(options);
