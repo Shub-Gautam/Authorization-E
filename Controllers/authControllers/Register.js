@@ -20,7 +20,7 @@ module.exports = {
       result.email ? (check = 1) : (check = 2);
 
       const doesExist = await user.findOne({
-        $or: [({ email: result.email }, { phonNo: result.phonNo })],
+        $or: [({ email: result.email }, { phoneNo: result.phoneNo })],
       });
 
       if (doesExist) throw createError.Conflict(`User is already registered`);
