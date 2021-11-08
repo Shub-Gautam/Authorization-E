@@ -14,6 +14,9 @@ Content-Type: application/json
 ### Verification
 POST http://localhost:8080/auth/verify/dce451d6-f6b2-4ab5-bdf4-1602ae3bddb2u6648
 
+###
+POST http://localhost:8080/api/save-places?location=28.632631%2C77.212819&keyword=restaurents
+
 
 ### Login
 POST http://localhost:8080/auth/login

@@ -21,26 +21,29 @@ const savePlaceApi = async (req, res, next) => {
     console.log(location, keyword);
 
     const { data } = await axios.get(
-      `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat_lng[0]}%2C${lat_lng[1]}&radius=1500&keyword=${type}&key=${google_api_key}`
+      `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat_lng[0]}%2C${lat_lng[1]}&radius=200&keyword=${type}&key=${google_api_key}`
     );
     const resultArr = data.results;
 
     // iterate through each object
     resultArr.map(async (value) => {
       // Check for same object
-      const doesExist = await restaurents.findOne({ place_id: value.place_id });
+      const doesExist = await restaurents.findOne({
+        place_id: value.place_id,
+      });
       if (doesExist) return;
 
       // Geting details of a place
       const placeInfo = await getPlaceInfo(value.place_id);
 
-      // Raw photos Array
-      // const placePhotos = getPlacePhotos(value.photos[0].photo_reference);
-
       // Additional processing before storing photos
       const photosArr = [];
-      for (let i = 0; i < placeInfo.photos.length; i++) {
-        photosArr.push(`${placeInfo.photos[i].photo_reference}`);
+
+      if (placeInfo.photos) {
+        for (let i = 0; i < placeInfo.photos.length; i++) {
+          let url = await getPlacePhotos(placeInfo.photos[i].photo_reference);
+          photosArr.push(`${url}`);
+        }
       }
 
       const dataObj = new restaurents({
@@ -64,6 +67,7 @@ const savePlaceApi = async (req, res, next) => {
 
     res.status(resCodes.SUCCESS).send({
       msg: resMsg.SUCCESS,
+      stat: `${resultArr.length} object Stored successfully`,
     });
   } catch (err) {
     next(err);
