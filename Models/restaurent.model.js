@@ -45,3 +45,11 @@ const resSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model("restaurent", resSchema);
+
+// db.find($and:[{
+//   lat : $gt min_lat,
+//   lng : $gt min_lng
+// },{
+//   lat : $lt max_lat,
+//   lng : $lt max_lng
+// }])
